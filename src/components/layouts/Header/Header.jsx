@@ -5,7 +5,7 @@ import { tools } from '../../../data/toolsData'
 const Header = () => {
     return (
         <>
-            <nav className='container px-5 py-4 shadow-md flex justify-between items-center'>
+            <nav className='container px-5 py-4 shadow-md flex justify-between items-center bg-white'>
                 <div className=''>
                     <NavLink
                         to="/"

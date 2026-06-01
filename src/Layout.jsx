@@ -5,9 +5,11 @@ import { Outlet } from 'react-router-dom'
 
 const Layout = () => {
     return (
-        <main className='min-h-screen flex flex-col justify-between'>
+        <main className='min-h-screen flex flex-col justify-between bg-amber-50 font-roboto'>
             <Header />
-            {<Outlet />}
+            <section className='container p-3'>
+                {<Outlet />}
+            </section>
             <Footer />
         </main>
     )
