@@ -1,10 +1,8 @@
 import React from 'react'
 
-const QRSizeSlider = () => {
+const QRSizeSlider = (props) => {
     const min = 100;
     const max = 500;
-
-    const [value, setValue] = React.useState(250);
 
     const handleChange = (e) => {
         let val = Number(e.target.value);
@@ -12,7 +10,7 @@ const QRSizeSlider = () => {
         if (val < min) val = min;
         if (val > max) val = max;
 
-        setValue(val);
+        props.setQrWidth(val);
     };
     return (
         <div className="rounded-lg w-full ">
@@ -23,7 +21,7 @@ const QRSizeSlider = () => {
                     type="range"
                     min={min}
                     max={max}
-                    value={value}
+                    value={props.value}
                     onChange={handleChange}
                     className="w-full accent-purple-600 h-1 range-sm"
                 />
@@ -32,7 +30,7 @@ const QRSizeSlider = () => {
                     type="number"
                     min={min}
                     max={max}
-                    value={value}
+                    value={props.value}
                     onChange={handleChange}
                     className="text-sm w-20 px-2 min-h-4 py-1 rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-purple-400 transition"
                 />
