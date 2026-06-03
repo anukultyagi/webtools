@@ -16,18 +16,21 @@ import { FaRegSquare } from "react-icons/fa6";
 import { FaVectorSquare } from "react-icons/fa";
 import { TbBorderCornerSquare } from "react-icons/tb";
 import { FaRegSquareFull } from "react-icons/fa6";
+import toast, { Toaster } from 'react-hot-toast';
 
 
 
 
 const QRGenerator = () => {
 
-    const [QrCodeInput, setQrCodeInput] = useState("Hakuna Matata")
-    const [qrWidth, setQrWidth] = useState(259)
+    const [qrCodeInput, setQrCodeInput] = useState("Hakuna Matata")
+    const [qrWidth, setQrWidth] = useState(250)
     const [forGroundColor, setForGroundColor] = useState("#000")
     const [backgroundColor, setBackgroundColor] = useState("#fff")
     const [cornerStyle, setCornerStyle] = useState("rounded")
     const [downloadExtension, setDownloadExtension] = useState("png")
+    const [qrLogo, setQrLogo] = useState("https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg")
+    const [errorCorrection, setErrorCorrection] = useState("M")
 
     const previewContainerRef = useRef(null);
     const qrCodeRef = useRef(null);
@@ -38,15 +41,49 @@ const QRGenerator = () => {
         });
     }
 
+    const handleFileUpload = (e) => {
+        if (!e.target.files?.[0]) return;
+        console.log(e.target.files[0])
+        const logoImage = e.target.files[0]
+        const objectURL = URL.createObjectURL(logoImage);
+        setQrLogo(objectURL)
+    }
+
+    const handleCopyBtn = () => {
+        try {
+            const canvas =
+                previewContainerRef.current.querySelector(
+                    "canvas"
+                );
+
+            if (!canvas) return;
+
+            canvas.toBlob(async (blob) => {
+                await navigator.clipboard.write([
+                    new ClipboardItem({
+                        "image/png": blob,
+                    }),
+                ]);
+
+                toast.success("QR copied!");
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     useEffect(() => {
 
         qrCodeRef.current = new QRCodeStyling({
             width: qrWidth,
             height: qrWidth,
             margin: 10,
-            type: "svg",
-            data: QrCodeInput,
-            image: "https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg", // Logo in center
+            type: "canvas",
+            data: qrCodeInput,
+            image: qrLogo, // Logo in center,
+            "qrOptions": {
+                "errorCorrectionLevel": errorCorrection
+            },
             dotsOptions: {
                 color: forGroundColor,
                 type: cornerStyle,  // "dots" | "rounded" | "classy" | "square"
@@ -73,28 +110,34 @@ const QRGenerator = () => {
             height: qrWidth,
             margin: 10,
 
-            data: QrCodeInput,
+            data: qrCodeInput,
+            image: qrLogo,
 
             dotsOptions: {
                 color: forGroundColor,
                 type: cornerStyle,
             },
-
+            "qrOptions": {
+                "errorCorrectionLevel": errorCorrection
+            },
             backgroundOptions: {
                 color: backgroundColor,
             },
         });
     }, [
-        QrCodeInput,
+        qrCodeInput,
         qrWidth,
         forGroundColor,
         backgroundColor,
         cornerStyle,
+        errorCorrection,
+        qrLogo
     ]);
 
     return (<>
 
         <div className=' p-3 flex gap-4'>
+            <Toaster />
             <div className='shadow-xs p-3 flex-1 bg-white rounded-lg'>
                 <div className='flex flex-col gap-3'>
                     {/* input area */}
@@ -105,7 +148,7 @@ const QRGenerator = () => {
                             name=""
                             placeholder="Type or paste your text here..."
                             id=""
-                            value={QrCodeInput}
+                            value={qrCodeInput}
                             onChange={(e) => setQrCodeInput(e.target.value)}
                         ></textarea>
                     </div>
@@ -115,6 +158,47 @@ const QRGenerator = () => {
                             <div className="flex my-2 gap-3">
                                 {/* side slider with size label and px values */}
                                 <QRSizeSlider setQrWidth={setQrWidth} value={qrWidth} />
+
+                                <div className='flex flex-col w-full'>
+
+                                    <label className="block mb-2.5 text-sm font-medium text-heading" htmlFor="file_input">Upload file</label>
+
+                                    <input
+                                        className="cursor-pointer border border-default-medium text-xs focus:ring-brand focus:border-brand block w-full shadow-xs placeholder:text-body px-3 py-1 rounded" aria-describedby="file_input_help"
+                                        id="file_input"
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => handleFileUpload(e)}
+
+                                    />
+
+                                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
+
+                                </div>
+
+                            </div>
+                            <div className="flex my-2 gap-3">
+                                {/* corner style with three options */}
+                                <div className="rounded-lg w-full ">
+                                    <span className='text-sm'>Set Corner Style</span>
+                                    <div className="flex gap-2 p-2">
+                                        <button className="pl-2 pr-2 p-1 border rounded-sm cursor-pointer hover:bg-zinc-100 border-purple-600" value="square"
+                                            onClick={(e) => setCornerStyle(e.target.value)}
+                                        >
+                                            <FaRegSquareFull className="text-2xl" />
+                                        </button>
+                                        <button className="pl-2 pr-2 p-1 border rounded-sm cursor-pointer hover:bg-zinc-100 border-purple-600" value="rounded"
+                                            onClick={(e) => setCornerStyle(e.target.value)}
+                                        >
+                                            <TbBorderCornerSquare className="text-2xl" />
+                                        </button>
+                                        <button className="pl-2 pr-2 p-1 border rounded-sm cursor-pointer hover:bg-zinc-100 border-purple-600" value="dots"
+                                            onClick={(e) => setCornerStyle(e.target.value)}
+                                        >
+                                            <TbBorderCornerSquare className="text-2xl" />
+                                        </button>
+                                    </div>
+                                </div>
                                 {/* foreground color picker */}
                                 <div className="rounded-lg flex flex-col gap-2 w-full">
                                     <span className='text-sm'>Foreground Color</span>
@@ -126,7 +210,6 @@ const QRGenerator = () => {
                                             onChange={(e) => setForGroundColor(e.target.value)}
                                             className="w-8 h-8 p-0 border-none cursor-pointer"
                                         />
-
                                         <span className="text-sm text-zinc-700">{forGroundColor}</span>
                                     </div>
                                 </div>
@@ -148,34 +231,30 @@ const QRGenerator = () => {
 
                             </div>
                             <div className="flex my-2 gap-3">
-                                {/* corner style with three options */}
-                                <div className="rounded-lg w-full ">
-                                    <span className='text-sm'>SetCornerStyle</span>
-                                    <div className="flex gap-2 p-2">
-                                        <button className="pl-2 pr-2 p-1 border rounded-sm cursor-pointer hover:bg-zinc-100 border-purple-600" value="square"
-                                            onClick={(e) => setCornerStyle(e.target.value)}
-                                        >
-                                            <FaRegSquareFull className="text-2xl" />
-                                        </button>
-                                        <button className="pl-2 pr-2 p-1 border rounded-sm cursor-pointer hover:bg-zinc-100 border-purple-600" value="rounded"
-                                            onClick={(e) => setCornerStyle(e.target.value)}
-                                        >
-                                            <TbBorderCornerSquare className="text-2xl" />
-                                        </button>
-                                        <button className="pl-2 pr-2 p-1 border rounded-sm cursor-pointer hover:bg-zinc-100 border-purple-600" value="dots"
-                                            onClick={(e) => setCornerStyle(e.target.value)}
-                                        >
-                                            <TbBorderCornerSquare className="text-2xl" />
-                                        </button>
-                                    </div>
+
+                                {/* Error Margin  */}
+                                <div className="rounded-lg w-full flex flex-col gap-2">
+                                    {/* slider + input */}
+                                    <span className='text-sm'>Error Correction </span>
+                                    {/* dropdown */}
+                                    <select
+                                        defaultValue="Medium"
+                                        className="text-xs min-h-4 w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-purple-400 transition"
+                                        onChange={(e) => setErrorCorrection(e.target.value)}
+                                        value={errorCorrection}
+                                    >
+                                        <option value="L">Low (L)</option>
+                                        <option value="M">Medium (M)</option>
+                                        <option value="H">High (H)</option>
+                                    </select>
+
+                                    <span className="text-zinc-600 text-xs self-end">
+                                        Recommended for most users
+                                    </span>
                                 </div>
-                            </div>
-                            <div className="flex my-2 gap-3">
-                                {/* margin with label and px values */}
-                                <SetQRMargin />
+
                             </div>
                         </div>
-                        {/* advance options */}
                         <div></div>
                     </div>
                 </div>
@@ -209,10 +288,11 @@ const QRGenerator = () => {
                     ><SiSvg />Download SVG</button>
 
                     <button className='flex items-center gap-2 px-4 py-2 text-sm rounded border border-mauve-600 text-mauve-600 hover:bg-linear-to-bl hover:from-violet-500 hover:to-fuchsia-500 hover:text-white text-nowrap'
-                        onClick={()     => downloadHandler("jpg")} value={"jpg"}
+                        onClick={() => downloadHandler("jpg")} value={"jpg"}
                     ><IoImageOutline />Download JPG</button>
 
                     <button className='flex items-center gap-2 px-4 py-2 text-sm rounded border border-mauve-600 text-mauve-600 hover:bg-linear-to-bl hover:from-violet-500 hover:to-fuchsia-500 hover:text-white text-nowrap'
+                        onClick={handleCopyBtn}
                     ><MdContentCopy />Copy Image</button>
 
                     <button className='flex items-center gap-2 px-4 py-2 text-sm rounded border border-mauve-600 text-mauve-600 hover:bg-linear-to-bl hover:from-violet-500 hover:to-fuchsia-500 hover:text-white text-nowrap'
