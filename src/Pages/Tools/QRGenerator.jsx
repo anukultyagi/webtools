@@ -16,9 +16,8 @@ import { FaRegSquare } from "react-icons/fa6";
 import { FaVectorSquare } from "react-icons/fa";
 import { TbBorderCornerSquare } from "react-icons/tb";
 import { FaRegSquareFull } from "react-icons/fa6";
+import { LuSquareDashed } from "react-icons/lu";
 import toast, { Toaster } from 'react-hot-toast';
-
-
 
 
 const QRGenerator = () => {
@@ -28,7 +27,7 @@ const QRGenerator = () => {
     const [forGroundColor, setForGroundColor] = useState("#000")
     const [backgroundColor, setBackgroundColor] = useState("#fff")
     const [cornerStyle, setCornerStyle] = useState("rounded")
-    const [downloadExtension, setDownloadExtension] = useState("png")
+
     const [qrLogo, setQrLogo] = useState("https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg")
     const [errorCorrection, setErrorCorrection] = useState("M")
 
@@ -49,7 +48,53 @@ const QRGenerator = () => {
         setQrLogo(objectURL)
     }
 
-    const handleCopyBtn = () => {
+    const handleSharing = async () => {
+        try {
+            const canvas =
+                previewContainerRef.current.querySelector(
+                    "canvas"
+                );
+
+            if (!canvas) return;
+
+            canvas.toBlob(async (blob) => {
+                if (!blob) return;
+
+                const qrFile = new File(
+                    [blob],
+                    "custom-qr-code.png",
+                    {
+                        type: "image/png",
+                    }
+                );
+
+                if (
+                    navigator.canShare?.({
+                        files: [qrFile],
+                    })
+                ) {
+                    await navigator.share({
+                        title: "QR Code",
+                        text: "Check out this QR code",
+                        files: [qrFile],
+                    });
+
+                    toast.success(
+                        "QR shared successfully!"
+                    );
+                } else {
+                    toast.error(
+                        "Sharing not supported"
+                    );
+                }
+            });
+        } catch (error) {
+            console.error(error);
+            toast.error("Sharing failed");
+        }
+    };
+
+    const handleCopyBtn = async () => {
         try {
             const canvas =
                 previewContainerRef.current.querySelector(
@@ -68,7 +113,7 @@ const QRGenerator = () => {
                 toast.success("QR copied!");
             });
         } catch (error) {
-            console.error(error);
+            toast.error("failed to copy QR");
         }
     }
 
@@ -136,171 +181,180 @@ const QRGenerator = () => {
 
     return (<>
 
-        <div className=' p-3 flex gap-4'>
+        <div className='p-3 flex flex-col md:flex-row gap-4 max-w-7xl mx-auto w-full'>
             <Toaster />
-            <div className='shadow-xs p-3 flex-1 bg-white rounded-lg'>
-                <div className='flex flex-col gap-3'>
-                    {/* input area */}
+
+            {/* Customization Panel */}
+            <div className='shadow-xs p-4 flex-1 bg-white rounded-lg w-full border border-gray-100'>
+                <div className='flex flex-col gap-5'>
+
+                    {/* Step 1: Input Area */}
                     <div className="flex flex-col gap-2">
-                        <h3 className="text-md font-semibold">1. Enter Content</h3>
+                        <h3 className="text-base font-semibold text-gray-800">1. Enter Content</h3>
                         <textarea
-                            className="w-full border border-gray-300 rounded-lg p-4 focus:outline-none focus:ring-1 focus:ring-purple-400 transition h-20 resize-none text-sm "
-                            name=""
+                            className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition h-20 resize-none text-sm text-gray-700"
                             placeholder="Type or paste your text here..."
-                            id=""
                             value={qrCodeInput}
                             onChange={(e) => setQrCodeInput(e.target.value)}
                         ></textarea>
                     </div>
-                    <div>
-                        <h3 className="text-md font-semibold">2. Customize Your QR Code</h3>
-                        <div>
-                            <div className="flex my-2 gap-3">
-                                {/* side slider with size label and px values */}
+
+                    {/* Step 2: Customization Blocks */}
+                    <div className="flex flex-col gap-4">
+                        <h3 className="text-base font-semibold text-gray-800">2. Customize Your QR Code</h3>
+
+                        {/* Row 1: Size & Upload */}
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <div className='w-full sm:w-1/2'>
                                 <QRSizeSlider setQrWidth={setQrWidth} value={qrWidth} />
-
-                                <div className='flex flex-col w-full'>
-
-                                    <label className="block mb-2.5 text-sm font-medium text-heading" htmlFor="file_input">Upload file</label>
-
-                                    <input
-                                        className="cursor-pointer border border-default-medium text-xs focus:ring-brand focus:border-brand block w-full shadow-xs placeholder:text-body px-3 py-1 rounded" aria-describedby="file_input_help"
-                                        id="file_input"
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={(e) => handleFileUpload(e)}
-
-                                    />
-
-                                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
-
-                                </div>
-
                             </div>
-                            <div className="flex my-2 gap-3">
-                                {/* corner style with three options */}
-                                <div className="rounded-lg w-full ">
-                                    <span className='text-sm'>Set Corner Style</span>
-                                    <div className="flex gap-2 p-2">
-                                        <button className="pl-2 pr-2 p-1 border rounded-sm cursor-pointer hover:bg-zinc-100 border-purple-600" value="square"
-                                            onClick={(e) => setCornerStyle(e.target.value)}
-                                        >
-                                            <FaRegSquareFull className="text-2xl" />
-                                        </button>
-                                        <button className="pl-2 pr-2 p-1 border rounded-sm cursor-pointer hover:bg-zinc-100 border-purple-600" value="rounded"
-                                            onClick={(e) => setCornerStyle(e.target.value)}
-                                        >
-                                            <TbBorderCornerSquare className="text-2xl" />
-                                        </button>
-                                        <button className="pl-2 pr-2 p-1 border rounded-sm cursor-pointer hover:bg-zinc-100 border-purple-600" value="dots"
-                                            onClick={(e) => setCornerStyle(e.target.value)}
-                                        >
-                                            <TbBorderCornerSquare className="text-2xl" />
-                                        </button>
-                                    </div>
-                                </div>
-                                {/* foreground color picker */}
-                                <div className="rounded-lg flex flex-col gap-2 w-full">
-                                    <span className='text-sm'>Foreground Color</span>
 
-                                    <div className="w-full flex items-center gap-2 border border-gray-300 rounded-md pl-4">
-                                        <input
-                                            type="color"
-                                            value={forGroundColor}
-                                            onChange={(e) => setForGroundColor(e.target.value)}
-                                            className="w-8 h-8 p-0 border-none cursor-pointer"
-                                        />
-                                        <span className="text-sm text-zinc-700">{forGroundColor}</span>
-                                    </div>
-                                </div>
-                                {/* background color picker */}
-                                <div className="rounded-lg flex flex-col gap-2 w-full">
-                                    <span className='text-sm'>Background Color</span>
-
-                                    <div className="w-full flex items-center gap-2 border border-gray-300 rounded-md pl-4">
-                                        <input
-                                            type="color"
-                                            value={backgroundColor}
-                                            onChange={(e) => setBackgroundColor(e.target.value)}
-                                            className="w-8 h-8 p-0 border-none cursor-pointer"
-                                        />
-
-                                        <span className="text-sm text-zinc-700">{backgroundColor}</span>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div className="flex my-2 gap-3">
-
-                                {/* Error Margin  */}
-                                <div className="rounded-lg w-full flex flex-col gap-2">
-                                    {/* slider + input */}
-                                    <span className='text-sm'>Error Correction </span>
-                                    {/* dropdown */}
-                                    <select
-                                        defaultValue="Medium"
-                                        className="text-xs min-h-4 w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-purple-400 transition"
-                                        onChange={(e) => setErrorCorrection(e.target.value)}
-                                        value={errorCorrection}
-                                    >
-                                        <option value="L">Low (L)</option>
-                                        <option value="M">Medium (M)</option>
-                                        <option value="H">High (H)</option>
-                                    </select>
-
-                                    <span className="text-zinc-600 text-xs self-end">
-                                        Recommended for most users
-                                    </span>
-                                </div>
-
+                            <div className='flex flex-col w-full sm:w-1/2'>
+                                <label className="block mb-2 text-sm font-medium text-gray-700" htmlFor="file_input">Upload Logo</label>
+                                <input
+                                    className="cursor-pointer border border-gray-300 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 block w-full shadow-xs px-3 py-1.5 h-9 rounded-md text-gray-700 bg-white"
+                                    aria-describedby="file_input_help"
+                                    id="file_input"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => handleFileUpload(e)}
+                                />
+                                <p className="mt-1 text-xs text-gray-400" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
                             </div>
                         </div>
-                        <div></div>
+
+                        {/* Row 2: Styles & Colors */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                            {/* Corner Styles */}
+                            <div className="w-full flex flex-col">
+                                <span className='text-sm font-medium text-gray-700 mb-2'>Set Corner Style</span>
+                                <div className="flex gap-2">
+                                    <button
+                                        className={`p-2 border rounded-md cursor-pointer hover:bg-zinc-50 transition flex-1 flex justify-center items-center ${cornerStyle === 'square' ? 'border-amber-500 bg-amber-50/50 text-amber-600' : 'border-gray-300 text-gray-600'}`}
+                                        value="square"
+                                        onClick={() => setCornerStyle("square")}
+                                    >
+                                        <FaRegSquareFull className="text-xl" />
+                                    </button>
+                                    <button
+                                        className={`p-2 border rounded-md cursor-pointer hover:bg-zinc-50 transition flex-1 flex justify-center items-center ${cornerStyle === 'rounded' ? 'border-amber-500 bg-amber-50/50 text-amber-600' : 'border-gray-300 text-gray-600'}`}
+                                        value="rounded"
+                                        onClick={() => setCornerStyle("rounded")}
+                                    >
+                                        <TbBorderCornerSquare className="text-xl" />
+                                    </button>
+                                    <button
+                                        className={`p-2 border rounded-md cursor-pointer hover:bg-zinc-50 transition flex-1 flex justify-center items-center ${cornerStyle === 'dots' ? 'border-amber-500 bg-amber-50/50 text-amber-600' : 'border-gray-300 text-gray-600'}`}
+                                        value="dots"
+                                        onClick={() => setCornerStyle("dots")}
+                                    >
+                                        <LuSquareDashed className="text-xl" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Foreground Color */}
+                            <div className="flex flex-col w-full">
+                                <span className='text-sm font-medium text-gray-700 mb-2'>Foreground Color</span>
+                                <div className="w-full flex items-center gap-2 border border-gray-300 rounded-md pl-3 pr-2 h-9 bg-white">
+                                    <input
+                                        type="color"
+                                        value={forGroundColor}
+                                        onChange={(e) => setForGroundColor(e.target.value)}
+                                        className="w-6 h-6 p-0 border-none cursor-pointer bg-transparent"
+                                    />
+                                    <span className="text-sm font-mono text-gray-600">{forGroundColor}</span>
+                                </div>
+                            </div>
+
+                            {/* Background Color */}
+                            <div className="flex flex-col w-full sm:col-span-2 lg:col-span-1">
+                                <span className='text-sm font-medium text-gray-700 mb-2'>Background Color</span>
+                                <div className="w-full flex items-center gap-2 border border-gray-300 rounded-md pl-3 pr-2 h-9 bg-white">
+                                    <input
+                                        type="color"
+                                        value={backgroundColor}
+                                        onChange={(e) => setBackgroundColor(e.target.value)}
+                                        className="w-6 h-6 p-0 border-none cursor-pointer bg-transparent"
+                                    />
+                                    <span className="text-sm font-mono text-gray-600">{backgroundColor}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Row 3: Error Correction */}
+                        <div className="flex gap-4">
+                            <div className="w-full flex flex-col gap-1">
+                                <span className='text-sm font-medium text-gray-700 mb-1'>Error Correction</span>
+                                <select
+                                    className="text-sm h-9 w-full px-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 bg-white text-gray-700 transition"
+                                    onChange={(e) => setErrorCorrection(e.target.value)}
+                                    value={errorCorrection}
+                                >
+                                    <option value="L">Low (L)</option>
+                                    <option value="M">Medium (M)</option>
+                                    <option value="H">High (H)</option>
+                                </select>
+                                <span className="text-gray-400 text-xs text-right mt-1">
+                                    Recommended for most users
+                                </span>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-                <div className=''>
+            </div>
 
-                </div>
-            </div >
-            <div className='shadow-xs p-3 flex-1 bg-white rounded-lg gap-8 flex flex-col'>
-                <div className='flex justify-between'>
-                    <h3 className='font-semibold'>QR Code Preview</h3>
-                    <div className='px-2 py-1 bg-amber-50 rounded border border-amber-100'>
-                        <span className='flex items-center gap-2 text-xs'><FaCircle className='text-amber-600 w-3' />Live Preview</span>
+            {/* Preview & Actions Panel */}
+            <div className='shadow-xs p-4 flex-1 bg-white rounded-lg gap-6 flex flex-col w-full border border-gray-100'>
+                <div className='flex justify-between items-center gap-2'>
+                    <h3 className='font-semibold text-gray-800'>QR Code Preview</h3>
+                    <div className='px-2.5 py-1 bg-amber-50 rounded-md border border-amber-100 shrink-0'>
+                        <span className='flex items-center gap-1.5 text-xs font-medium text-amber-700'>
+                            <FaCircle className='text-amber-500 w-2 h-2 animate-pulse' /> Live Preview
+                        </span>
                     </div>
                 </div>
-                <div className='justify-center flex rounded items-center flex-col'>
 
-                    <div className="output rounded overflow-hidden shadow" ref={previewContainerRef}></div>
-
+                <div className='justify-center flex rounded-md items-center flex-col w-full overflow-hidden py-4 bg-gray-50/50 border border-dashed border-gray-200'>
+                    <div className="output rounded-md overflow-auto max-h-60 shadow-sm bg-white" ref={previewContainerRef}></div>
                     <div>
-                        <p className='text-xs text-mauve-600 text-center mt-5'>Your QR code will appear here <br /> Start by entering content and customizing</p>
+                        <p className='text-xs text-gray-400 text-center mt-5 px-4'>
+                            Your QR code will update automatically. <br /> Start customizing options on the left.
+                        </p>
                     </div>
                 </div>
-                {/* Download buttons */}
-                <div className='flex justify-center flex-wrap gap-3 items-center'>
-                    <button className='flex items-center gap-2 px-4 py-2 text-sm rounded border border-mauve-600 text-mauve-600 hover:bg-linear-to-bl hover:from-violet-500 hover:to-fuchsia-500 hover:text-white text-nowrap'
+
+                {/* Unified Actions / Download buttons */}
+                <div className='flex justify-center flex-wrap gap-2.5 items-center mt-auto'>
+                    <button
+                        className='flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition text-nowrap cursor-pointer'
                         onClick={() => downloadHandler("png")} value={"PNG"}
                     ><FiDownload />Download PNG</button>
 
-                    <button className='flex items-center gap-2 px-4 py-2 text-sm rounded border border-mauve-600 text-mauve-600 hover:bg-linear-to-bl hover:from-violet-500 hover:to-fuchsia-500 hover:text-white text-nowrap'
+                    <button
+                        className='flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition text-nowrap cursor-pointer'
                         onClick={() => downloadHandler("svg")} value={"SVG"}
                     ><SiSvg />Download SVG</button>
 
-                    <button className='flex items-center gap-2 px-4 py-2 text-sm rounded border border-mauve-600 text-mauve-600 hover:bg-linear-to-bl hover:from-violet-500 hover:to-fuchsia-500 hover:text-white text-nowrap'
+                    <button
+                        className='flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition text-nowrap cursor-pointer'
                         onClick={() => downloadHandler("jpg")} value={"jpg"}
                     ><IoImageOutline />Download JPG</button>
 
-                    <button className='flex items-center gap-2 px-4 py-2 text-sm rounded border border-mauve-600 text-mauve-600 hover:bg-linear-to-bl hover:from-violet-500 hover:to-fuchsia-500 hover:text-white text-nowrap'
+                    <button
+                        className='flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition text-nowrap cursor-pointer'
                         onClick={handleCopyBtn}
                     ><MdContentCopy />Copy Image</button>
 
-                    <button className='flex items-center gap-2 px-4 py-2 text-sm rounded border border-mauve-600 text-mauve-600 hover:bg-linear-to-bl hover:from-violet-500 hover:to-fuchsia-500 hover:text-white text-nowrap'
-
+                    <button
+                        className='flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition text-nowrap cursor-pointer'
+                        onClick={handleSharing}
                     ><IoShareSocialOutline />Share QR Code</button>
                 </div>
             </div>
-        </div >
+        </div>
         <div></div>
     </>
     )

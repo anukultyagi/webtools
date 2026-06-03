@@ -13,9 +13,9 @@ const QRSizeSlider = (props) => {
         props.setQrWidth(val);
     };
     return (
-        <div className="rounded-lg w-full ">
+        <div className="rounded-lg w-full">
             {/* slider + input */}
-            <span className='text-sm'>Size</span>
+            <span className='block mb-2 text-sm font-medium text-gray-700'>Size</span>
             <div className="flex w-full items-center gap-4">
                 <input
                     type="range"
@@ -23,7 +23,7 @@ const QRSizeSlider = (props) => {
                     max={max}
                     value={props.value}
                     onChange={handleChange}
-                    className="w-full accent-purple-600 h-1 range-sm"
+                    className="w-full accent-amber-600 h-1 range-sm cursor-pointer"
                 />
 
                 <input
@@ -32,12 +32,12 @@ const QRSizeSlider = (props) => {
                     max={max}
                     value={props.value}
                     onChange={handleChange}
-                    className="text-sm w-20 px-2 min-h-4 py-1 rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-purple-400 transition"
+                    className="text-sm w-20 px-2 py-1.5 h-9 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition text-gray-700"
                 />
             </div>
 
             {/* labels */}
-            <div className="flex justify-between mt-2  text-zinc-600 text-xs ">
+            <div className="flex justify-between mt-2 text-zinc-500 text-xs">
                 <span>min : {min}px</span>
                 {/* <span>{value}px</span> */}
                 <span>max : {max}px</span>
