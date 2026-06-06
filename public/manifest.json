@@ -3,7 +3,7 @@
   "short_name": "WebTools",
   "theme_color": "#7c3aed",
   "background_color": "#ffffff",
-  "display": "standalone",
+  "display": "browser",
   "icons": [
     {
       "src": "\/android-icon-36x36.png",

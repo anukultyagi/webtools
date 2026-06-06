@@ -6,17 +6,17 @@ const Home = () => {
     <>
       <Helmet>
         <title>Free Online Tools for Developers & Creators | WebTools</title>
-        <link rel="canonical" href={`${domain}/tools/free-qr-code-generator`} />
+        <link rel="canonical" href={`${domain}`} />
         <meta name="description" content="Free online tools including QR code generator, markdown editor and more. Fast, simple and privacy-friendly."></meta>
         {/* Open Graph */}
         <meta
           property="og:title"
-          content="Free QR Code Generator"
+          content="Free Online Tools for Developers & Creators | WebTools"
         />
 
         <meta
           property="og:description"
-          content="Create beautiful custom QR codes with logo, colors and download support."
+          content="Free online tools including QR code generator, markdown editor and more. Fast, simple and privacy-friendly."
         />
 
         <meta
@@ -26,12 +26,16 @@ const Home = () => {
 
         <meta
           property="og:url"
-          content="https://webtools-ten-theta.vercel.app/tools/free-qr-code-generator"
+          content="https://webtools-ten-theta.vercel.app"
         />
 
         <meta
           property="og:image"
           content="https://webtools-ten-theta.vercel.app/og.png"
+        />
+        <meta
+          name="robots"
+          content="index, follow"
         />
 
       </Helmet>

@@ -183,8 +183,11 @@ const QRGenerator = () => {
     return (<>
         <Helmet>
             <title>Free QR Code Generator with Logo & Custom Design | WebTools</title>
+
             <link rel="canonical" href={`${domain}/tools/free-qr-code-generator`} />
+
             <meta name="description" content="Generate custom QR codes instantly with logo, colors, styles and error correction. Download QR codes in PNG, SVG or JPG for free."></meta>
+
             {/* Open Graph */}
             <meta
                 property="og:title"
@@ -203,12 +206,35 @@ const QRGenerator = () => {
 
             <meta
                 property="og:url"
-                content="https://yourdomain.com/tools/free-qr-code-generator"
+                content={`${domain}/tools/free-qr-code-generator`}
             />
 
             <meta
                 property="og:image"
                 content="https://webtools-ten-theta.vercel.app/og.png"
+            />
+            <meta
+                name="twitter:card"
+                content="summary_large_image"
+            />
+
+            <meta
+                name="twitter:title"
+                content="Free QR Code Generator with Logo & Custom Design | WebTools"
+            />
+
+            <meta
+                name="twitter:description"
+                content="Generate custom QR codes instantly with logo, colors, styles and error correction."
+            />
+
+            <meta
+                name="twitter:image"
+                content={`${domain}/og.png`}
+            />
+            <meta
+                name="robots"
+                content="index, follow"
             />
 
         </Helmet>
