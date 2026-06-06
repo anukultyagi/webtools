@@ -44,7 +44,6 @@ const QRGenerator = () => {
 
     const handleFileUpload = (e) => {
         if (!e.target.files?.[0]) return;
-        console.log(e.target.files[0])
         const logoImage = e.target.files[0]
         const objectURL = URL.createObjectURL(logoImage);
         setQrLogo(objectURL)
@@ -183,18 +182,18 @@ const QRGenerator = () => {
 
     return (<>
         <Helmet>
-            <title>Free QR Code Generator | WebTools</title>
+            <title>Free QR Code Generator with Logo & Custom Design | WebTools</title>
             <link rel="canonical" href={`${domain}/tools/free-qr-code-generator`} />
-            <meta name="description" content="Generate QR codes instantly for URLs, text, WiFi, emails and more. Customize colors, logo, styles and download in PNG, SVG or JPG."></meta>
+            <meta name="description" content="Generate custom QR codes instantly with logo, colors, styles and error correction. Download QR codes in PNG, SVG or JPG for free."></meta>
             {/* Open Graph */}
             <meta
                 property="og:title"
-                content="Free QR Code Generator"
+                content="Free QR Code Generator with Logo & Custom Design | WebTools"
             />
 
             <meta
                 property="og:description"
-                content="Create beautiful custom QR codes with logo, colors and download support."
+                content="Generate custom QR codes instantly with logo, colors, styles and error correction. Download QR codes in PNG, SVG or JPG for free."
             />
 
             <meta
@@ -209,7 +208,7 @@ const QRGenerator = () => {
 
             <meta
                 property="og:image"
-                content="https://yourdomain.com/og-image.jpg"
+                content="https://webtools-ten-theta.vercel.app/og.png"
             />
 
         </Helmet>
