@@ -18,6 +18,8 @@ import { TbBorderCornerSquare } from "react-icons/tb";
 import { FaRegSquareFull } from "react-icons/fa6";
 import { LuSquareDashed } from "react-icons/lu";
 import toast, { Toaster } from 'react-hot-toast';
+import { Helmet } from 'react-helmet-async'
+import { domain } from '../../data/siteData'
 
 
 const QRGenerator = () => {
@@ -180,6 +182,37 @@ const QRGenerator = () => {
     ]);
 
     return (<>
+        <Helmet>
+            <title>Free QR Code Generator | WebTools</title>
+            <link rel="canonical" href={`${domain}/tools/free-qr-code-generator`} />
+            <meta name="description" content="Generate QR codes instantly for URLs, text, WiFi, emails and more. Customize colors, logo, styles and download in PNG, SVG or JPG."></meta>
+            {/* Open Graph */}
+            <meta
+                property="og:title"
+                content="Free QR Code Generator"
+            />
+
+            <meta
+                property="og:description"
+                content="Create beautiful custom QR codes with logo, colors and download support."
+            />
+
+            <meta
+                property="og:type"
+                content="website"
+            />
+
+            <meta
+                property="og:url"
+                content="https://yourdomain.com/tools/free-qr-code-generator"
+            />
+
+            <meta
+                property="og:image"
+                content="https://yourdomain.com/og-image.jpg"
+            />
+
+        </Helmet>
 
         <div className='p-3 flex flex-col md:flex-row gap-4 max-w-7xl mx-auto w-full'>
             <Toaster />

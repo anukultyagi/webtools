@@ -11,6 +11,8 @@ export const tools = [
     showInNavbar: true,
     description: "Generate QR codes instantly",
     category: "Generators",
+    metaTitle: "Free QR Code Generator | WebTools",
+    metaDesc: "Generate custom QR codes instantly. Add logos, customize colors, corner styles and download in PNG, SVG or JPG.",
   },
 
   {
