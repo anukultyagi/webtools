@@ -211,7 +211,7 @@ const QRGenerator = () => {
 
             <meta
                 property="og:image"
-                content="https://webtools-ten-theta.vercel.app/og.png"
+                content={`${domain}/og.png`}
             />
             <meta
                 name="twitter:card"

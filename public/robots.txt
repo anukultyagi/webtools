@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://webtools-ten-theta.vercel.app/sitemap.xml
+Sitemap: https://webtools-alpha.vercel.app/sitemap.xml

@@ -1,1 +1,1 @@
-export const domain = "https://webtools-ten-theta.vercel.app";
+export const domain = "https://webtools-alpha.vercel.app";

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Helmet } from 'react-helmet-async'
+import { domain } from '../data/siteData'
 
 const Home = () => {
   return (
@@ -26,12 +27,12 @@ const Home = () => {
 
         <meta
           property="og:url"
-          content="https://webtools-ten-theta.vercel.app"
+          content="https://webtools-alpha.vercel.app"
         />
 
         <meta
           property="og:image"
-          content="https://webtools-ten-theta.vercel.app/og.png"
+          content="https://webtools-alpha.vercel.app/og.png"
         />
         <meta
           name="robots"
